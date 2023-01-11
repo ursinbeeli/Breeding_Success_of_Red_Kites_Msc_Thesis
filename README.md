@@ -1,4 +1,4 @@
-# Master_Thesis_Milvus_Milvus
+# Master Thesis _Milvus milvus_
 
 ## Determining the Breeding Success of Red Kites (_Milvus milvus_) using GPS Telemetry
 
