@@ -2,10 +2,13 @@
 
 ## Things to discuss
 
-- Finding suiting predictors
-  - Bla
-  - Bli
-  - Blu
+- Finding suitable predictors
+  - I tried out:
+    - Distance to nest
+    - Residence time at the nest
+    - Revisits to the nest
+    - KDE area (95% and 50%) (daily, 7-days, 5-days, 3-day, difference to previous five days)
+  - With different variations, the accuracy of the multinomial model was always around 60% with a Kappa of 20-40%
 
 
 
