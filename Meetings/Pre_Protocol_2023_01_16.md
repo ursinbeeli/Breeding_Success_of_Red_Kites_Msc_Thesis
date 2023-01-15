@@ -4,7 +4,7 @@
 
 - Finding suitable predictors
   - I tried out the following:
-  -   Distance to nest
+    - Distance to nest
     - Residence time at the nest
     - Revisits to the nest
     - KDE area (95% and 50%) (daily, 7-days, 5-days, 3-day, difference to previous five days)
