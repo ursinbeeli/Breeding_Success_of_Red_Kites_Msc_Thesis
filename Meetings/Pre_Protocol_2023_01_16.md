@@ -3,12 +3,13 @@
 ## Things to discuss
 
 - Finding suitable predictors
-  - I tried out:
-    - Distance to nest
+  - I tried out the following:
+  -   Distance to nest
     - Residence time at the nest
     - Revisits to the nest
     - KDE area (95% and 50%) (daily, 7-days, 5-days, 3-day, difference to previous five days)
   - With different variations, the accuracy of the multinomial model was always around 60% with a Kappa of 20-40%
+- A possible problem of the model could be that there is no ground truth for the nest building phase. As there are already e.g. revisits to the nest, longer residence times and a smaller area but still it is classified as non-breeding, this might confuse the model.
 
 
 
