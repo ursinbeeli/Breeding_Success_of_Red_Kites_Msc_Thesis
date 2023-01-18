@@ -6,3 +6,7 @@
 - Two birds have enough data but no temperature data is available.
 - I changed the age column to a format with following categories: 1CY, 2CY & 3CY (CY = Calendar Year) (3CY means 2 and older)
 - Does it make sense from a biological point of view to remove locations that did not occur during the day?
+
+
+## Notes for me
+- bird with year_id "2019_161" has only two days of feeding.
