@@ -40,9 +40,10 @@ for (k in data_sets) {
   milvus$timestamp <- as.POSIXct(milvus$timestamp, format ="%Y-%m-%d %H:%M:%S", tz = "UTC")
   # Removing NAs in timestamp column
   milvus <- milvus[!is.na(milvus$timestamp),]
-  # creating a year and a month column
+  # creating a year, a month and a day column
   milvus$year <- format(as.Date(milvus$timestamp), format = "%Y", tz = "UTC")
   milvus$month <- format(as.Date(milvus$timestamp), format = "%m", tz = "UTC")
+  milvus$day <- format(as.Date(milvus$timestamp), format = "%d", tz = "UTC")
   # Removing points without coordinates
   milvus <- milvus[!is.na(milvus$location.long) & !is.na(milvus$location.lat),]
   
@@ -167,18 +168,19 @@ write.csv(milvus_milsar_ready,
 milvus_gsm <- milvus_gsm %>%
   select(event_id = event.id,
          bird_id = individual.local.identifier,
-         year_id, timestamp, year, month, long_wgs, lat_wgs, long_eea, lat_eea,
-         external_temperature = external.temperature)
+         year_id, timestamp, year, month, day, long_wgs, lat_wgs,
+         long_eea, lat_eea, external_temperature = external.temperature)
 milvus_milsar <- milvus_milsar %>%
   select(event_id = event.id,
          bird_id = individual.local.identifier,
-         year_id, timestamp, year, month, long_wgs, lat_wgs, long_eea, lat_eea,
-         external_temperature = external.temperature)
+         year_id, timestamp, year, month, day, long_wgs, lat_wgs,
+         long_eea, lat_eea, external_temperature = external.temperature)
 # binding both data frames together
 milvus <- bind_rows(milvus_gsm, milvus_milsar)
 # cleaning temperature data
 milvus$external_temperature <- as.integer(round(milvus$external_temperature))
 milvus$external_temperature[milvus$external_temperature >= 99] <- NA
+milvus <- milvus[!is.na(milvus$external_temperature) ,]
 
 # SAVING FILE-------------------------------------------------------------------
 write.csv(milvus,
