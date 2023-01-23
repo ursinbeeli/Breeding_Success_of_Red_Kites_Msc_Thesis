@@ -320,8 +320,26 @@ milvus <- left_join(milvus, mcp_50_3day, by = "event_id")
 
 
 
+# 95% moving window (mean over sevem days) ---> 4 mins <---
+milvus$mcp_area_95_mw_7d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 7:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-6):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(mcp_area_95 = first(mcp_area_95))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$mcp_area_95_mw_7d <- 
+      mean(l$mcp_area_95, na.rm = T)
+  }
+}
+
+
+
 # 95% moving window (mean over five days) ---> 4 mins <---
-milvus$mcp_area_95_mw <- NA
+milvus$mcp_area_95_mw_5d <- NA
 for (i in unique(milvus$year_id)) {
   milvus_individual <- milvus[milvus$year_id == i ,]
   for (j in 5:length(unique(milvus_individual$date_id))) {
@@ -331,31 +349,51 @@ for (i in unique(milvus$year_id)) {
       summarise(mcp_area_95 = first(mcp_area_95))
     milvus[milvus$year_id == i &
              milvus$date_id == unique(milvus_individual$date_id)[j]
-           ,]$mcp_area_95_mw <- 
+           ,]$mcp_area_95_mw_5d <- 
       mean(l$mcp_area_95, na.rm = T)
   }
 }
 
 
 
-# 95% moving window difference (diff to mean of previous five days) ---> 4 mins <---
-milvus$mcp_area_95_mw_diff <- NA
+# 95% moving window (mean over three days) ---> 4 mins <---
+milvus$mcp_area_95_mw_3d <- NA
 for (i in unique(milvus$year_id)) {
   milvus_individual <- milvus[milvus$year_id == i ,]
-  for (j in 2:length(unique(milvus_individual$date_id))) {
-    milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
-           ,]$mcp_area_95_mw_diff <- 
-      abs(first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
-                       ,]$mcp_area_95)
-          - first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j-1]
-                         ,]$mcp_area_95_mw))
+  for (j in 3:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-2):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(mcp_area_95 = first(mcp_area_95))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$mcp_area_95_mw_3d <- 
+      mean(l$mcp_area_95, na.rm = T)
+  }
+}
+
+
+
+# 50% moving window (mean over seven days) ---> 4 mins <---
+milvus$mcp_area_50_mw_7d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 7:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-6):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(mcp_area_50 = first(mcp_area_50))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$mcp_area_50_mw_7d <- 
+      mean(l$mcp_area_50, na.rm = T)
   }
 }
 
 
 
 # 50% moving window (mean over five days) ---> 4 mins <---
-milvus$mcp_area_50_mw <- NA
+milvus$mcp_area_50_mw_5d <- NA
 for (i in unique(milvus$year_id)) {
   milvus_individual <- milvus[milvus$year_id == i ,]
   for (j in 5:length(unique(milvus_individual$date_id))) {
@@ -365,127 +403,72 @@ for (i in unique(milvus$year_id)) {
       summarise(mcp_area_50 = first(mcp_area_50))
     milvus[milvus$year_id == i &
              milvus$date_id == unique(milvus_individual$date_id)[j]
-           ,]$mcp_area_50_mw <- 
+           ,]$mcp_area_50_mw_5d <- 
       mean(l$mcp_area_50, na.rm = T)
   }
 }
 
 
 
-# 50% moving window difference (diff to mean of previous five days) ---> 4 mins <---
-milvus$mcp_area_50_mw_diff <- NA
+# 50% moving window (mean over three days) ---> 4 mins <---
+milvus$mcp_area_50_mw_3d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 3:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-2):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(mcp_area_50 = first(mcp_area_50))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$mcp_area_50_mw_3d <- 
+      mean(l$mcp_area_50, na.rm = T)
+  }
+}
+
+
+
+# 95% moving window difference (diff to mean of previous five days) ---> 4 mins <---
+milvus$mcp_area_95_mw_5d_diff <- NA
 for (i in unique(milvus$year_id)) {
   milvus_individual <- milvus[milvus$year_id == i ,]
   for (j in 2:length(unique(milvus_individual$date_id))) {
     milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
-           ,]$mcp_area_50_mw_diff <- 
+           ,]$mcp_area_95_mw_5d_diff <- 
+      abs(first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
+                       ,]$mcp_area_95)
+          - first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j-1]
+                         ,]$mcp_area_95_mw_5d))
+  }
+}
+
+
+
+# 50% moving window difference (diff to mean of previous five days) ---> 4 mins <---
+milvus$mcp_area_50_mw_5d_diff <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 2:length(unique(milvus_individual$date_id))) {
+    milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$mcp_area_50_mw_5d_diff <- 
       abs(first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j]
                        ,]$mcp_area_50)
           - first(milvus[milvus$date_id == unique(milvus_individual$date_id)[j-1]
-                         ,]$mcp_area_50_mw))
+                         ,]$mcp_area_50_mw_5d))
   }
 }
 
+
+
 # remove data before 10th of March, they were only necessary for MCP calculations
-milvus <- milvus %>%
+milvus_temp <- milvus %>%
   filter(!(month == 3 & day < 10))
 
 # remove NAs that occur in some MCP calculations
-milvus <- na.omit(milvus)
+milvus_temp <- na.omit(milvus_temp)
 
 # save file
-write.csv(milvus, here("data/modified/03_multinomial/01_milvus_parameters.csv"),
-          row.names = F)
-
-
-
-# STEP LENGTH ------------------------------------------------------------------
-milvus_track_sl <- milvus_track
-colnames(milvus_track_sl)[4] <- "burst_"
-
-# calculating steps by burst while burst represents the date_id
-milvus_track_sl <- steps_by_burst(milvus_track_sl)
-
-# deleting all entries calculated for time intervals > 1.5 hours
-milvus_track_sl <- milvus_track_sl[milvus_track_sl$dt_ < 4500,]
-
-# calculate some statistical measures on a daily basis
-milvus_track_sl <- milvus_track_sl %>%
-  group_by(burst_) %>%
-  summarise(
-    sl_max = max(sl_),
-    sl_min = min(sl_),
-    sl_mean = mean(sl_)
-  )
-
-# join step length information to milvus data set
-milvus <- left_join(milvus, milvus_track_sl, by = c("date_id" = "burst_"))
-
-
-
-# TEMPERATURE ------------------------------------------------------------------
-# calculate some statistical measures on a daily basis
-milvus_temp <- milvus %>%
-  group_by(date_id) %>%
-  summarise(
-    t_max = max(external_temperature),
-    t_min = min(external_temperature),
-    t_mean = mean(external_temperature)
-  )
-
-# join temperature information to milvus data set
-milvus <- left_join(milvus, milvus_temp, by = "date_id")
-
-
-
-# DISTANCE TO NEST -------------------------- 5 hours --------------------------
-# creating sf objects of bird locations and nest locations
-ground_truth_nest <- ground_truth %>%
-  select(year_id, nest_id)
-milvus_sf <- left_join(milvus, ground_truth_nest, by = "year_id")
-milvus_sf <- milvus_sf %>%
-  select(event_id, date_id, nest_id, long_eea, lat_eea) %>%
-  st_as_sf(coords = c("long_eea", "lat_eea"), crs = 3035)
-nest_sf <- ground_truth %>%
-  select(nest_id, nest_elevation, nest_long, nest_lat) %>%
-  st_as_sf(coords = c("nest_long", "nest_lat"), crs = 4326) %>%
-  st_transform(crs = 3035)
-
-# calculation the distance of each position to respective nest location
-milvus_sf$nest_dist <- NA
-
-# This loop takes about ---> 5 hours <---
-for (i in 1:nrow(milvus_sf)) {
-  milvus_sf[i ,]$nest_dist <- st_distance(milvus_sf[i ,]$geometry,
-                                          nest_sf[nest_sf$nest_id == milvus_sf[i ,]$nest_id ,]$geometry)
-  if (i%%50 == 0) {
-    cat(paste0(i, " of ", nrow(milvus_sf), " --> ", round(i*100/nrow(milvus_sf),1), "%\n")) 
-  }
-}
-
-# drop geometry to save file as in csv format
-milvus_nest_dist <- milvus_sf %>%
-  st_drop_geometry()
-
-# save file
-write.csv(milvus_nest_dist, here("data/modified/03_multinomial/02_milvus_nest_dist.csv"),
-          row.names = F)
-
-# calculate some statistical measures on a daily basis
-milvus_nest_dist <- milvus_nest_dist %>%
-  group_by(date_id) %>%
-  summarise(
-    nest_dist_max = max(nest_dist),
-    nest_dist_min = min(nest_dist),
-    nest_dist_mean = mean(nest_dist)
-  ) %>%
-  select(date_id, nest_dist_max, nest_dist_min, nest_dist_mean)
-
-# join nest distance information to milvus data set
-milvus <- left_join(milvus, milvus_nest_dist, by = "date_id")
-
-# save file
-write.csv(milvus, here("data/modified/03_multinomial/03_milvus_parameters.csv"),
+write.csv(milvus_temp, here("data/modified/03_multinomial/01_milvus_parameters.csv"),
           row.names = F)
 
 
@@ -548,14 +531,208 @@ milvus_recurse_nest <- cbind(data.frame(date_id = names(milvus_track_recurse_nes
 # join nest recurse information to milvus data set
 milvus <- left_join(milvus, milvus_recurse_nest, by = "date_id")
 
+
+
+# residence time nest (mean over seven days) ---> 4 mins <---
+milvus$residence_time_nest_mw_7d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 7:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-6):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(residence_time_nest = first(residence_time_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$residence_time_nest_mw_7d <- 
+      mean(l$residence_time_nest, na.rm = T)
+  }
+}
+
+# residence time nest (mean over five days) ---> 4 mins <---
+milvus$residence_time_nest_mw_5d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 5:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-4):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(residence_time_nest = first(residence_time_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$residence_time_nest_mw_5d <- 
+      mean(l$residence_time_nest, na.rm = T)
+  }
+}
+
+# residence time nest (mean over five days) ---> 4 mins <---
+milvus$residence_time_nest_mw_3d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 3:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-2):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(residence_time_nest = first(residence_time_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$residence_time_nest_mw_3d <- 
+      mean(l$residence_time_nest, na.rm = T)
+  }
+}
+
+# revisits nest (mean over seven days) ---> 4 mins <---
+milvus$revisits_nest_mw_7d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 7:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-6):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(revisits_nest = first(revisits_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$revisits_nest_mw_7d <- 
+      mean(l$revisits_nest, na.rm = T)
+  }
+}
+
+# revisits nest (mean over five days) ---> 4 mins <---
+milvus$revisits_nest_mw_5d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 5:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-4):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(revisits_nest = first(revisits_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$revisits_nest_mw_5d <- 
+      mean(l$revisits_nest, na.rm = T)
+  }
+}
+
+# revisits nest (mean over three days) ---> 4 mins <---
+milvus$revisits_nest_mw_3d <- NA
+for (i in unique(milvus$year_id)) {
+  milvus_individual <- milvus[milvus$year_id == i ,]
+  for (j in 3:length(unique(milvus_individual$date_id))) {
+    k <- unique(milvus_individual$date_id)[(j-2):j]
+    l <- milvus_individual[milvus_individual$date_id %in% k ,] %>%
+      group_by(date_id) %>%
+      summarise(revisits_nest = first(revisits_nest))
+    milvus[milvus$year_id == i &
+             milvus$date_id == unique(milvus_individual$date_id)[j]
+           ,]$revisits_nest_mw_3d <- 
+      mean(l$revisits_nest, na.rm = T)
+  }
+}
+
+
+
+# remove data before 10th of March, they were only necessary for MCP calculations
+milvus <- milvus %>%
+  filter(!(month == 3 & day < 10))
+
+# remove NAs that occur in some MCP calculations
+milvus <- na.omit(milvus)
+
 # save file
-write.csv(milvus, here("data/modified/03_multinomial/04_milvus_parameters.csv"),
+write.csv(milvus, here("data/modified/03_multinomial/02_milvus_parameters.csv"),
           row.names = F)
 
 
 
+# STEP LENGTH ------------------------------------------------------------------
+milvus_track_sl <- milvus_track
+colnames(milvus_track_sl)[4] <- "burst_"
+
+# calculating steps by burst while burst represents the date_id
+milvus_track_sl <- steps_by_burst(milvus_track_sl)
+
+# deleting all entries calculated for time intervals > 1.5 hours
+milvus_track_sl <- milvus_track_sl[milvus_track_sl$dt_ < 4500,]
+
+# calculate some statistical measures on a daily basis
+milvus_track_sl <- milvus_track_sl %>%
+  group_by(burst_) %>%
+  summarise(
+    sl_max = max(sl_),
+    sl_min = min(sl_),
+    sl_mean = mean(sl_)
+  )
+
+# join step length information to milvus data set
+milvus <- left_join(milvus, milvus_track_sl, by = c("date_id" = "burst_"))
 
 
+
+# TEMPERATURE ------------------------------------------------------------------
+# calculate some statistical measures on a daily basis
+milvus_temp <- milvus %>%
+  group_by(date_id) %>%
+  summarise(
+    t_max = max(external_temperature),
+    t_min = min(external_temperature),
+    t_mean = mean(external_temperature),
+    t_var = var(external_temperature)
+  )
+
+# join temperature information to milvus data set
+milvus <- left_join(milvus, milvus_temp, by = "date_id")
+
+
+
+# DISTANCE TO NEST -------------------------- 5 hours --------------------------
+# creating sf objects of bird locations and nest locations
+ground_truth_nest <- ground_truth %>%
+  select(year_id, nest_id)
+milvus_sf <- left_join(milvus, ground_truth_nest, by = "year_id")
+milvus_sf <- milvus_sf %>%
+  select(event_id, date_id, nest_id, long_eea, lat_eea) %>%
+  st_as_sf(coords = c("long_eea", "lat_eea"), crs = 3035)
+nest_sf <- ground_truth %>%
+  select(nest_id, nest_elevation, nest_long, nest_lat) %>%
+  st_as_sf(coords = c("nest_long", "nest_lat"), crs = 4326) %>%
+  st_transform(crs = 3035)
+
+# calculation the distance of each position to respective nest location
+milvus_sf$nest_dist <- NA
+
+# This loop takes about ---> 5 hours <---
+for (i in 1:nrow(milvus_sf)) {
+  milvus_sf[i ,]$nest_dist <- st_distance(milvus_sf[i ,]$geometry,
+                                          nest_sf[nest_sf$nest_id == milvus_sf[i ,]$nest_id ,]$geometry)
+  if (i%%50 == 0) {
+    cat(paste0(i, " of ", nrow(milvus_sf), " --> ", round(i*100/nrow(milvus_sf),1), "%\n")) 
+  }
+}
+
+# drop geometry to save file as in csv format
+milvus_nest_dist <- milvus_sf %>%
+  st_drop_geometry()
+
+# save file
+write.csv(milvus_nest_dist, here("data/modified/03_multinomial/03_milvus_nest_dist.csv"),
+          row.names = F)
+
+# calculate some statistical measures on a daily basis
+milvus_nest_dist <- milvus_nest_dist %>%
+  group_by(date_id) %>%
+  summarise(
+    nest_dist_max = max(nest_dist),
+    nest_dist_min = min(nest_dist),
+    nest_dist_mean = mean(nest_dist)
+  ) %>%
+  select(date_id, nest_dist_max, nest_dist_min, nest_dist_mean)
+
+# join nest distance information to milvus data set
+milvus <- left_join(milvus, milvus_nest_dist, by = "date_id")
+
+# save file
+write.csv(milvus, here("data/modified/03_multinomial/04_milvus_parameters.csv"),
+          row.names = F)
 
 
 
@@ -582,21 +759,32 @@ milvus_daily <- milvus %>%
     mcp_area_50_5day = first(mcp_area_50_5day),
     mcp_area_95_3day = first(mcp_area_95_3day),
     mcp_area_50_3day = first(mcp_area_50_3day),
-    mcp_area_95_mw = first(mcp_area_95_mw),
-    mcp_area_95_mw_diff = first(mcp_area_95_mw_diff),
-    mcp_area_50_mw = first(mcp_area_50_mw),
-    mcp_area_50_mw_diff = first(mcp_area_50_mw_diff),
+    mcp_area_95_mw_7d = first(mcp_area_95_mw_7d),
+    mcp_area_95_mw_5d = first(mcp_area_95_mw_5d),
+    mcp_area_95_mw_3d = first(mcp_area_95_mw_3d),
+    mcp_area_50_mw_7d = first(mcp_area_50_mw_7d),
+    mcp_area_50_mw_5d = first(mcp_area_50_mw_5d),
+    mcp_area_50_mw_3d = first(mcp_area_50_mw_3d),
+    mcp_area_95_mw_5d_diff = first(mcp_area_95_mw_5d_diff),
+    mcp_area_50_mw_5d_diff = first(mcp_area_50_mw_5d_diff),
+    residence_time_nest = first(residence_time_nest),
+    revisits_nest = first(revisits_nest),
+    residence_time_nest_mw_7d = first(residence_time_nest_mw_7d),
+    residence_time_nest_mw_5d = first(residence_time_nest_mw_5d),
+    residence_time_nest_mw_3d = first(residence_time_nest_mw_3d),
+    revisits_nest_mw_7d = first(revisits_nest_mw_7d),
+    revisits_nest_mw_5d = first(revisits_nest_mw_5d),
+    revisits_nest_mw_3d = first(revisits_nest_mw_3d),
     sl_max = first(sl_max),
     sl_min = first(sl_min),
     sl_mean = first(sl_mean),
     t_max = first(t_max),
     t_min = first(t_min),
     t_mean = first(t_mean),
+    t_var = first(t_var),
     nest_dist_max = first(nest_dist_max),
     nest_dist_min = first(nest_dist_min),
     nest_dist_mean = first(nest_dist_mean),
-    residence_time_nest = first(residence_time_nest),
-    revisits_nest = first(revisits_nest),
     locations_per_day = n()
     )
 
@@ -604,8 +792,7 @@ milvus_daily <- milvus %>%
 write.csv(milvus_daily, here("data/modified/03_multinomial/05_milvus_parameters_daily.csv"),
           row.names = F)
 
-milvus_daily <- read.csv(here("data/modified/03_multinomial/05_milvus_parameters_daily.csv"))      # DELETE!!!
-ground_truth <- read.csv(here("data/modified/01_ground_truth/milvus_ground_truth_nest.csv"))       # DELETE!!!
+
 
 # ADDING GROUND TRUTH DATA -----------------------------------------------------
 # changing format of date columns to date format
