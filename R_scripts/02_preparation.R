@@ -29,6 +29,7 @@ milvus_milsar <- milvus_milsar[milvus_milsar$year_id %in%
                                  unique(ground_truth$year_id) ,]
 
 
+
 # ------------------------------ DATA PREPARATION ------------------------------ 
 data_sets <- c("milvus_gsm", "milvus_milsar")
 for (k in data_sets) {
@@ -152,6 +153,8 @@ milvus_milsar_ready <- milvus_milsar %>%
          -solar.cell.voltage, -tag.voltage, -sensor.type,
          -individual.taxon.canonical.name, -tag.local.identifier, -study.name)
 
+
+
 # -------------------------------- SAVING FILE --------------------------------- 
 # creating directory
 if (!dir.exists(here("data/modified"))) {
@@ -189,6 +192,8 @@ milvus <- bind_rows(milvus_gsm, milvus_milsar)
 milvus$external_temperature <- as.integer(round(milvus$external_temperature))
 milvus$external_temperature[milvus$external_temperature >= 99] <- NA
 milvus <- milvus[!is.na(milvus$external_temperature) ,]
+
+
 
 # -------------------------------- SAVING FILE --------------------------------- 
 write.csv(milvus,
