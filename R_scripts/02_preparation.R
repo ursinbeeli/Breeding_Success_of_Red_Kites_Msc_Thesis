@@ -7,10 +7,10 @@ library(amt)
 # disabling scientific notation
 options(scipen=999)
 
-# LOADING DATA -----------------------------------------------------------------
+# -------------------------------- LOADING DATA --------------------------------
 milvus_gsm <- read.csv(here("data/Milvusmilvus_GSM_SOI.csv"))
 milvus_milsar <- read.csv(here("data/Milvusmilvus_Milsar_SOI_final.csv"))
-ground_truth <- read.csv(here("data/modified/01_ground_truth/milvus_ground_truth_nest.csv"))
+ground_truth <- read.csv(here("data/modified/01_ground_truth/milvus_ground_truth.csv"))
 
 # CREATING AN INDIVIDUAL BIRD-YEAR ID
 milvus_gsm <- milvus_gsm %>%
@@ -29,7 +29,7 @@ milvus_milsar <- milvus_milsar[milvus_milsar$year_id %in%
                                  unique(ground_truth$year_id) ,]
 
 
-# DATA PREPARATION -------------------------------------------------------------
+# ------------------------------ DATA PREPARATION ------------------------------ 
 data_sets <- c("milvus_gsm", "milvus_milsar")
 for (k in data_sets) {
   # select one of the data sets
@@ -49,7 +49,7 @@ for (k in data_sets) {
   
   
   
-  # REMOVING DUPLICATED TIMESTAMPS ---------------------------------------------
+  # ---------------------- REMOVING DUPLICATED TIMESTAMPS ---------------------- 
   # Grouping the gps data by bird_id and nesting them
   milvus <- milvus %>%
     nest(data = -"individual.local.identifier")
@@ -76,9 +76,9 @@ for (k in data_sets) {
   
   
   
-  # REMOVING SPATIAL OUTLIERS ----------------------------------------------------
+  # ------------------------ REMOVING SPATIAL OUTLIERS ------------------------- 
   # Borders of Europe with a 100km Buffer
-  sf_use_s2(FALSE) # deactivating s2 spherical geometry
+  sf_use_s2(FALSE) # deactivating spherical geometry s2
   europe <- ne_countries(scale = 50, continent = "europe", returnclass="sf")
   st_crs(europe) <- 4326
   europe <- suppressMessages(suppressWarnings(
@@ -109,7 +109,7 @@ for (k in data_sets) {
   
   
   
-  # RESAMPLE TO 1 HOUR INTERVALS -----------------------------------------------
+  # ----------------------- RESAMPLE TO 1 HOUR INTERVALS ----------------------- 
   # creating tracks
   milvus_track <- milvus %>%
     make_track(long_wgs, lat_wgs, timestamp,
@@ -139,7 +139,7 @@ for (k in data_sets) {
 
 
 
-# REMOVING UNNECESSARY COLUMNS -------------------------------------------------
+# ------------------------ REMOVING UNNECESSARY COLUMNS ------------------------ 
 milvus_gsm_ready <- milvus_gsm %>%
   select(-visible, -gps.activity.count, -battery.charging.current, -comments,
          -gps.satellite.count, -gsm.gsm.signal.strength, -import.marked.outlier,
@@ -152,7 +152,15 @@ milvus_milsar_ready <- milvus_milsar %>%
          -solar.cell.voltage, -tag.voltage, -sensor.type,
          -individual.taxon.canonical.name, -tag.local.identifier, -study.name)
 
-# SAVING FILE-------------------------------------------------------------------
+# -------------------------------- SAVING FILE --------------------------------- 
+# creating directory
+if (!dir.exists(here("data/modified"))) {
+  dir.create("data/modified")
+}
+if (!dir.exists(here("data/modified/02_milvus_preprocessed"))) {
+  dir.create("data/modified/02_milvus_preprocessed")
+}
+
 write.csv(milvus_gsm_ready,
           here("data/modified/02_milvus_preprocessed/01_milvus_gsm.csv"),
           row.names = F)
@@ -163,7 +171,7 @@ write.csv(milvus_milsar_ready,
 
 
 
-# DATA MERGING------------------------------------------------------------------
+# -------------------------------- DATA MERGING -------------------------------- 
 # removing unnecessary columns
 milvus_gsm <- milvus_gsm %>%
   select(event_id = event.id,
@@ -182,7 +190,7 @@ milvus$external_temperature <- as.integer(round(milvus$external_temperature))
 milvus$external_temperature[milvus$external_temperature >= 99] <- NA
 milvus <- milvus[!is.na(milvus$external_temperature) ,]
 
-# SAVING FILE-------------------------------------------------------------------
+# -------------------------------- SAVING FILE --------------------------------- 
 write.csv(milvus,
           here("data/modified/02_milvus_preprocessed/03_milvus_combined.csv"),
           row.names = F)
