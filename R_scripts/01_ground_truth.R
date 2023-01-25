@@ -1,7 +1,10 @@
 library(here)
 library(dplyr)
 
-# Loading GPS Data
+# disabling scientific notation
+options(scipen=999)
+
+# -------------------------------- LOADING DATA --------------------------------
 milvus_gsm <- read.csv(here("data/Milvusmilvus_GSM_SOI.csv"))
 milvus_milsar <- read.csv(here("data/Milvusmilvus_Milsar_SOI_final.csv"))
 # Loading Life History Data
@@ -190,7 +193,14 @@ ground_truth <- ground_truth %>%
 
 
 
-#-----------------------------SAVING DATA FRAMES--------------------------------
+#---------------------------- SAVING DATA FRAMES -------------------------------
+# creating directory
+if (!dir.exists(here("data/modified"))) {
+  dir.create("data/modified")
+}
+if (!dir.exists(here("data/modified/01_ground_truth"))) {
+  dir.create("data/modified/01_ground_truth")
+}
 write.csv(ground_truth,
           here("data/modified/01_ground_truth/milvus_ground_truth.csv"),
           row.names = F)
