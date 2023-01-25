@@ -13,22 +13,20 @@ nl <- read.csv(here("data/Basic_nest_list_2015_2022.csv"))
 
 
 
-#-----------------------------PREPARATION---------------------------------------
+# --------------------------- PREPARATION --------------------------------------
 # defining years to receive  ground truth
 years <- c(2016:2022)
 # excluding birds that are not available in gsm and milsar data set
 ilh <- ilh[ilh$bird_id %in% unique(milvus_milsar$individual.local.identifier) |
              ilh$bird_id %in% unique(milvus_gsm$individual.local.identifier) ,]
-bp <- bp[bp$ID %in% unique(milvus_milsar$individual.local.identifier) |
-           bp$ID %in% unique(milvus_gsm$individual.local.identifier) ,]
 # excluding first brood of one bird that had a replacement brood
 bp <- bp[bp$replacement_brood != "no" ,]
 
 # selecting only necessary columns for breeding parameters
 bp <- bp %>%
-  select(bird_id = ID,
+  select(nest_id = ID,
          year,
-         year_id,
+         year_nest_id = year_id,
          incubation = incubation.yes.no.,
          hatchlings = hatchlings.yes.no.,
          egg_laying_date,
@@ -84,13 +82,18 @@ for (i in years[2:length(years)]) {
   ilh <- bind_rows(ilh, get(paste0("ilh_", i)))
 }
 
+# removing rows without a nest_id
+ilh <- ilh %>%
+  filter(!is.na(nest_id))
+
 # preparing for join
 ilh <- ilh %>%
-  mutate(year_id = paste(year, bird_id, sep = "_")) %>%
-  select(-bird_id, -year)
+  mutate(year_id = paste(year, bird_id, sep = "_"),
+         year_nest_id = paste(year, nest_id, sep = "_")) %>%
+  select(-nest_id, -year)
 
 # joining breeding parameters with individual life history
-ground_truth <- left_join(bp, ilh, by = "year_id")
+ground_truth <- left_join(ilh, bp, by = "year_nest_id")
 
 # selecting only necessary columns for nest list
 nl <- nl %>%
@@ -103,10 +106,6 @@ nl <- nl[!is.na(nl$nest_id) ,]
 # joining ground truth with nest information
 ground_truth <- left_join(ground_truth, nl, by = "nest_id")
 
-# removing birds with no known sex
-ground_truth <- ground_truth %>%
-  filter(!is.na(sex) & sex != "unknown" & sex != "unknown ")
-
 # removing birds with no incubation
 ground_truth <- ground_truth %>%
   filter(incubation == "yes")
@@ -117,12 +116,9 @@ ground_truth$hatching_date <- as.Date(ground_truth$hatching_date, format ="%d.%m
 ground_truth$earliest_empty <- as.Date(ground_truth$earliest_empty, format ="%d.%m.%y", tz = "UTC")
 ground_truth$latest_empty <- as.Date(ground_truth$latest_empty, format ="%d.%m.%y", tz = "UTC")
 
-# removing birds that have been breeding but have no observed egg laying date
+# removing birds that have no observed egg laying date or hatching date
 ground_truth <- ground_truth %>%
-  filter(!(incubation == "yes" & is.na(egg_laying_date)))
-
-# removing birds that have had hatchlings but have no observed hatching date
-ground_truth <- ground_truth[!is.na(ground_truth$hatching_date) ,]
+  filter(!is.na(egg_laying_date) & !is.na(hatching_date))
 
 # removing birds that have no hatchlings but have an observed hatching date
 ground_truth <- ground_truth %>%
@@ -161,15 +157,6 @@ for (i in 1:nrow(ground_truth)) {
   }
 }
 
-# removing birds with same empty_date as egg_laying_date
-for(i in 1:nrow(ground_truth)) {
-  if (!is.na(ground_truth[i,]$empty_date) & !is.na(ground_truth[i,]$egg_laying_date)) {
-    if (ground_truth[i,]$empty_date == ground_truth[i,]$egg_laying_date) {
-      ground_truth[i,]$empty_date <- NA
-    }
-  }
-}
-
 # removing birds with no empty_date
 ground_truth <- ground_truth[!is.na(ground_truth$empty_date) ,]
 
@@ -191,35 +178,21 @@ ground_truth[ground_truth$age_cy > 3 ,]$age_cy <- 3
 ground_truth <- ground_truth %>%
   select(-hatch_year, -age)
 
-# simplifying territory in a binary way to yes or no
-ground_truth[grepl("\\d", ground_truth$territory) ,]$territory <- "yes"
+# changing "unknown" to NA in territory column
 ground_truth[!is.na(ground_truth$territory) &
-               ground_truth$territory == "none"
-             ,]$territory <- "no"
-ground_truth[!(is.na(ground_truth$territory) |
-                 ground_truth$territory == "yes" |
-                 ground_truth$territory == "no")
-               ,]$territory <- NA
+               ground_truth$territory == "unknown",]$territory <- NA
 
 # reordering columns
-ground_truth_nest <- ground_truth %>%
+ground_truth <- ground_truth %>%
   select(bird_id, year, year_id, sex, age_cy, territory, incubation, hatchlings,
          egg_laying_date, hatching_date, empty_date,
-         nest_id, nest_elevation, nest_lat, nest_long) %>%
-  filter(!is.na(nest_id))
+         nest_id, year_nest_id, nest_elevation, nest_lat, nest_long)
 
-ground_truth_simple <- ground_truth %>%
-  select(bird_id, year, year_id, sex, age_cy, territory, incubation, hatchlings,
-         egg_laying_date, hatching_date, empty_date)
+
 
 #-----------------------------SAVING DATA FRAMES--------------------------------
-write.csv(ground_truth_nest,
-          here("data/modified/01_ground_truth/milvus_ground_truth_nest.csv"),
+write.csv(ground_truth,
+          here("data/modified/01_ground_truth/milvus_ground_truth.csv"),
           row.names = F)
-
-write.csv(ground_truth_simple,
-          here("data/modified/01_ground_truth/milvus_ground_truth_simple.csv"),
-          row.names = F)
-
 
 
