@@ -1,11 +1,12 @@
 # Determining the Breeding Success of Red Kites (*Milvus milvus*) using GPS Telemetry
 In my master’s thesis, the breeding behaviour of red kites (*Milvus milvus*) was analysed based on GPS point data collected by the Swiss Ornithological Institute. In particular, individual aspects of the breeding cycle were determined in order to evaluate the breeding success of red kites by developing a model that allows for detailed fine-tuning to account for the heterogeneity of behavioural patterns of individuals within a population. The following is an overview of the R scripts created for this purpose and an explanation of their function.
-
 <br/>
+
 ### 00_master_script.R
 The master script loads all required packages and runs all scripts.
 
 <br/>
+
 ### 01_validation.R
 This script creates an overview table with all available birds for each year in which tracking data was available and contains the following parameters:
 
