@@ -12,7 +12,7 @@ milvus_gsm <- read.csv(here("../Data/Milvusmilvus_GSM_SOI.csv"))
 milvus_milsar <- read.csv(here("../Data/Milvusmilvus_Milsar_SOI_final.csv"))
 # Validation information
 milvus_validation <-
-  read.csv(here("../Data/Output/01_validation/milvus_home_range_and_nest.csv"))
+  read.csv(here("../Data/Output/01_validation_data/milvus_home_range_and_nest.csv"))
 
 
 
@@ -31,15 +31,33 @@ for (k in data_sets) {
                                    format = "%Y", tz = "UTC"),
                             "_", individual.local.identifier)) %>%
     filter(year_id %in% milvus_validation$year_id)
-  # Converting timestamp into timestamp format
-  milvus$timestamp <- as.POSIXct(milvus$timestamp,
-                                 format ="%Y-%m-%d %H:%M:%S", tz = "UTC")
-  # Removing NAs in timestamp column
-  milvus <- milvus[!is.na(milvus$timestamp),]
+
+    # # Converting timestamp into timestamp format
+  # milvus$timestamp <- as.POSIXct(milvus$timestamp,
+  #                                format ="%Y-%m-%d %H:%M:%S", tz = "UTC")
+  # # Removing NAs in timestamp column
+  # milvus <- milvus[!is.na(milvus$timestamp),]
   # Creating a year, a month and a day column
-  milvus$year <- as.integer(format(as.Date(milvus$timestamp), format = "%Y", tz = "UTC"))
-  milvus$month <- as.integer(format(as.Date(milvus$timestamp), format = "%m", tz = "UTC"))
-  milvus$day <- as.integer(format(as.Date(milvus$timestamp), format = "%d", tz = "UTC"))
+  # milvus$year <- as.integer(format(as.Date(milvus$timestamp), format = "%Y", tz = "UTC"))
+  # milvus$month <- as.integer(format(as.Date(milvus$timestamp), format = "%m", tz = "UTC"))
+  # milvus$day <- as.integer(format(as.Date(milvus$timestamp), format = "%d", tz = "UTC"))
+  
+  # Creating several time specific variables
+  milvus <- milvus %>%
+    mutate(timestamp = as.POSIXct(timestamp, format ="%Y-%m-%d %H:%M:%S", tz = "UTC"),
+           date = as.Date(timestamp, tz = "UTC"),
+           year = as.integer(format(as.Date(timestamp), format = "%Y", th = "UTC")),
+           month = as.integer(format(as.Date(timestamp), format = "%m", th = "UTC")),
+           day = as.integer(format(as.Date(timestamp), format = "%d", th = "UTC")),
+           week = format(date, format = "%W"),
+           year_week = format(date, format = "%Y-%W"),
+           year_week_id = paste0(format(date, format = "%Y_%W"), "_", individual.local.identifier),
+           date_id = paste0(date, "_", individual.local.identifier))
+  
+  # Removing entries with NAs in timestamp column
+  milvus <- milvus[!is.na(milvus$timestamp),]
+  
+  
   # Removing points outside of breeding season
   milvus <- milvus %>%
     dplyr::filter(month > 1 & month < 9 & !(month == 8 & day > 15))
@@ -144,12 +162,12 @@ for (k in data_sets) {
 milvus_gsm <- milvus_gsm %>%
   select(event_id = event.id,
          bird_id = individual.local.identifier,
-         year_id, timestamp, year, month, day, long_wgs, lat_wgs,
+         year_id, timestamp, date, year, month, day, week, year_week, year_week_id, date_id, long_wgs, lat_wgs,
          long_eea, lat_eea, external_temperature = external.temperature)
 milvus_milsar <- milvus_milsar %>%
   select(event_id = event.id,
          bird_id = individual.local.identifier,
-         year_id, timestamp, year, month, day, long_wgs, lat_wgs,
+         year_id, timestamp, date, year, month, day, week, year_week, year_week_id, date_id, long_wgs, lat_wgs,
          long_eea, lat_eea, external_temperature = external.temperature)
 # Binding both data frames together
 milvus <- bind_rows(milvus_gsm, milvus_milsar)
@@ -170,7 +188,7 @@ if (!dir.exists(here("../Data/Output/02_milvus_preprocessed"))) {
 }
 
 write.csv(milvus,
-          here("../Data/Output/02_milvus_preprocessed/milvus_sensor.csv"),
+          here("../Data/Output/02_milvus_preprocessed/milvus.csv"),
           row.names = F)
 
 
