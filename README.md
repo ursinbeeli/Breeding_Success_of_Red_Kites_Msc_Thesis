@@ -28,3 +28,28 @@ This script prepares the tracking data. The data of a bird is only retained if i
 <br/>
 
 ### 03_parameters.R
+This scripts calculates relevant parameters for moving ecology analysis on a daily basis. The parameters serve as a basis for home range calculations in script 04_home_rang.R.
+
+<br/>
+
+### 04_home_range.R
+This script specifies thresholds that separate birds with a home range from birds without a home range.
+
+<br/>
+
+### 05_nest.R
+This script calculates recursion parameters that allow an identification of birds with a nest. Thresholds are specified thaht separate birds with a nest from birds without a nest.
+
+<br/>
+
+### 06_model_preparation.R
+
+
+<br/>
+
+### 07_model_fine_tuning.R
+
+<br/>
+
+### 08_model_validation.R
+
