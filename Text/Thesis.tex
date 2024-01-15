@@ -1,0 +1,172 @@
+%--------------------
+% Packages
+% -------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc} % important for encoding umlauts
+\renewcommand{\familydefault}{\sfdefault} % Sans Serif Font
+%\renewcommand{\familydefault}{\rmdefault} % Roman (Serif) Font
+\usepackage{inputenc} % Umlaute
+
+\usepackage[usenames,dvipsnames,table]{xcolor} % Use colors for text segments
+\usepackage[style=apa]{biblatex} % for citations and bibliography
+\addbibresource{Literature.bib} %Import the bibliography file
+
+\usepackage[pdftex]{graphicx} % Required for including figures
+\renewcommand{\listfigurename}{Figures} % change name of list of figures
+\renewcommand{\listtablename}{Tables} % change name of list of figures
+\usepackage[pdftex,linkcolor=black,pdfborder={0 0 0}]{hyperref} % Format links for pdf
+\usepackage{calc} % To reset the counter in the document after title page
+\usepackage{enumitem} % Includes lists
+\usepackage[justification=centering,
+            labelfont=it,small,
+            textfont=it,small]{caption} % To specify the figure captions
+
+\frenchspacing % No double spacing between sentences
+\linespread{1.2} % Set linespace
+%\usepackage[a4paper, lmargin=0.1666\paperwidth, rmargin=0.1666\paperwidth, tmargin=0.1111\paperheight, bmargin=0.1111\paperheight]{geometry} %margins
+\usepackage[a4paper, lmargin=2.54cm, rmargin=2.54cm, tmargin=2.54cm, bmargin=2.54cm]{geometry} %margins
+
+\usepackage[all]{nowidow} % Tries to remove widows
+\usepackage[protrusion=true,expansion=true]{microtype} % Improves typography, load after fontpackage is selected
+
+% Package for graphics ---------------------------------
+\usepackage{tikz} \usetikzlibrary{calc, arrows.meta, intersections, patterns, positioning, shapes.misc, fadings, through, decorations.pathreplacing}
+\definecolor{ColorOne}{named}{MidnightBlue}
+\definecolor{ColorTwo}{named}{Dandelion}
+\definecolor{ColorThree}{named}{Plum}
+\definecolor{ColorFour}{named}{CadetBlue}
+\definecolor{ColorFive}{named}{Aquamarine}
+\definecolor{ColorSix}{named}{MidnightBlue}
+\definecolor{ColorSeven}{named}{Gray}
+% ------------------------------------------------------
+
+% Package for centering Tables
+\usepackage{tabularx}
+
+% Package for positioning images and tables
+\usepackage{float}
+
+% Package for mathmode
+\usepackage{amsmath}
+
+
+%-----------------------
+% Set pdf information and add title, fill in the fields
+%-----------------------
+\hypersetup{ 	
+pdfsubject = {Red Kites Breeding Success},
+pdftitle = {Masters Thesis Red Kites},
+pdfauthor = {Ursin Beeli}
+}
+
+%-----------------------
+% Begin document
+%-----------------------
+
+\begin{document}
+\pagenumbering{empty}
+\begin{figure}
+    \includegraphics[width=0.345\textwidth]{figures/cover/uzh.png}
+    \includegraphics[width=0.3\textwidth]{figures/cover/blank.png}
+    \includegraphics[width=0.345\textwidth]{figures/cover/vogelwarte.jpg}
+\end{figure}
+
+\title {Determining the Breeding Success of Red Kites (\textit{Milvus milvus}) using GPS Telemetry
+
+\vspace{2\baselineskip}
+
+\large GEO 511 Master’s Thesis
+
+\vspace{2\baselineskip}
+}
+
+\author{\textbf{Author:}\\Ursin Beeli\\16-920-753
+}
+\date{}
+\renewcommand*\contentsname{Contents}
+\maketitle
+
+\vspace{4\baselineskip}
+
+\noindent\textbf{Supervised by\\}
+Dr. Patrick Scherler, Swiss Ornithological Institute\\Prof. Dr. Robert Weibel, University of Zurich
+
+\vspace{2\baselineskip}
+
+\noindent\textbf{Faculty Representative\\}
+Prof. Dr. Robert Weibel, University of Zurich
+
+\vspace{8\baselineskip}
+
+\begin{center}
+30.04.2023\\Department of Geography, University of Zurich
+\end{center}
+
+\thispagestyle{empty}
+
+\pagebreak
+\pagenumbering{roman}
+
+\section*{Abstract}
+\input{sections/01_abstract}
+
+\newpage
+\section*{Acknowledgements}
+\input{sections/02_acknowledgements}
+
+\newpage
+\tableofcontents
+
+\newpage
+\listoffigures
+
+\listoftables
+
+\newpage
+\pagenumbering{arabic}
+
+\section{Introduction}
+\input{sections/03_introduction}
+
+\newpage
+\section{Theoretical Background}
+\input{sections/04_theoretical_background}
+
+\newpage
+\section{Methods}
+\input{sections/05_methods}
+
+\newpage
+\section{Results}
+\input{sections/06_results}
+
+\newpage
+\section{Discussion}
+\input{sections/07_discussion}
+
+\newpage
+\section{Conclusion}
+\input{sections/08_conclusion}
+
+\newpage
+\printbibliography[title = Literature, heading = bibintoc]
+
+\newpage
+\section*{R Packages}
+\addcontentsline{toc}{section}{R packages}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\input{sections/09_r_packages}
+
+\newpage
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\input{sections/10_appendices}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{Personal Declaration}
+\section*{Personal Declaration}
+\input{sections/11_personal_declaration}
+
+\end{document}
