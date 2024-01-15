@@ -6,6 +6,15 @@ library(recurse)
 library(sf)
 library(rnaturalearth)
 library(ggplot2)
+library(ggpubr)
+library(suncalc)
+library(brms)
+
+
+
+# CAUTION: Running this script takes around 10 hours with a late 2016 MacBook Pro with 16GB Ram
+
+
 
 # RUNNING SCRIPTS --------------------------------------------------------------
 # Creating a data set with validation information about home range and nest for each individual and year
@@ -23,11 +32,19 @@ source("04_home_range.R")
 # Calculating relevant parameters for nest detection and finding threshold values to separate birds with a nest from birds without a nest
 source("05_nest.R")
 
-# Preparing the data set for a multinomial logistic regression model
-source("06_model_preparation.R")
+# Creating a data set with validation information about daily breeding behaviour during brood cycle
+source("06_mlrm_validation.R")
 
-# Defining the optimal multinomial logistic regression model
-source("07_model_fine_tuning.R")
+# Preparing the movement data set for a multinomial logistic regression model
+source("07_mlrm_parameters.R")
 
-# Validating the multinomial logistic regression model
-source("08_model_validation.R copy.R")
+# Building a multinomial logistic regression model with the training data and plotting its estimates
+source("08_mlrm_model.R")
+
+# Analysing the performance of the model and calculating statistics
+source("09_mlrm_performance.R")
+
+# Plotting the model predictions on the testing data
+source("10_mlrm_prediction_plots.R")
+
+

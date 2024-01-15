@@ -31,16 +31,6 @@ for (k in data_sets) {
                                    format = "%Y", tz = "UTC"),
                             "_", individual.local.identifier)) %>%
     filter(year_id %in% milvus_validation$year_id)
-
-    # # Converting timestamp into timestamp format
-  # milvus$timestamp <- as.POSIXct(milvus$timestamp,
-  #                                format ="%Y-%m-%d %H:%M:%S", tz = "UTC")
-  # # Removing NAs in timestamp column
-  # milvus <- milvus[!is.na(milvus$timestamp),]
-  # Creating a year, a month and a day column
-  # milvus$year <- as.integer(format(as.Date(milvus$timestamp), format = "%Y", tz = "UTC"))
-  # milvus$month <- as.integer(format(as.Date(milvus$timestamp), format = "%m", tz = "UTC"))
-  # milvus$day <- as.integer(format(as.Date(milvus$timestamp), format = "%d", tz = "UTC"))
   
   # Creating several time specific variables
   milvus <- milvus %>%
@@ -180,15 +170,15 @@ milvus <- milvus %>%
 
 # SAVING DATA ------------------------------------------------------------------
 # Creating directory
-if (!dir.exists(here("../Data/Output/02_milvus_preprocessed"))) {
+if (!dir.exists(here("../Data/Output/02_preprocessed_data"))) {
   if (!dir.exists(here("../Data/Output"))) {
     dir.create("../Data/Output")
   }
-  dir.create("../Data/Output/02_milvus_preprocessed")
+  dir.create("../Data/Output/02_preprocessed_data")
 }
 
 write.csv(milvus,
-          here("../Data/Output/02_milvus_preprocessed/milvus.csv"),
+          here("../Data/Output/02_preprocessed_data/milvus.csv"),
           row.names = F)
 
 

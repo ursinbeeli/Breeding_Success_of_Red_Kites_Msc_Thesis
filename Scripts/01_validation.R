@@ -163,15 +163,15 @@ milvus_home_range_and_nest <- full_join(milvus_nest_combined, milvus_home_range_
 
 # SAVING DATA ------------------------------------------------------------------
 # Creating directory
-if (!dir.exists(here("../Data/Output/01_validation"))) {
+if (!dir.exists(here("../Data/Output/01_validation_data"))) {
   if (!dir.exists(here("../Data/Output"))) {
     dir.create("../Data/Output")
   }
-  dir.create("../Data/Output/01_validation")
+  dir.create("../Data/Output/01_validation_data")
 }
 
 write.csv(milvus_home_range_and_nest,
-          here("../Data/Output/01_validation/milvus_home_range_and_nest.csv"),
+          here("../Data/Output/01_validation_data/milvus_home_range_and_nest.csv"),
           row.names = F)
 
 
