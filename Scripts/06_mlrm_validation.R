@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 
@@ -192,14 +193,15 @@ ground_truth <- ground_truth %>%
 
 
 
-# SAVING DATA FRAMES -----------------------------------------------------------
-# creating directory
+# SAVING DATA ------------------------------------------------------------------
+# Creating directory
 if (!dir.exists(here("../Data/Output/06_mlrm_validation_data"))) {
   if (!dir.exists(here("../Data/Output"))) {
     dir.create("../Data/Output")
   }
   dir.create("../Data/Output/06_mlrm_validation_data")
 }
+
 write.csv(ground_truth,
           here("../Data/Output/06_mlrm_validation_data/milvus_brood_validation.csv"),
           row.names = F)

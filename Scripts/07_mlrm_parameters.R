@@ -1,8 +1,9 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
+library(sf)
 library(amt)
 library(recurse)
-library(sf)
 
 
 
@@ -16,6 +17,7 @@ milvus <- read.csv(here("../Data/Output/02_preprocessed_data/milvus.csv"))
 # Validation information
 milvus_brood_validation <-
   read.csv(here("../Data/Output/06_mlrm_validation_data/milvus_brood_validation.csv"))
+# Potential nest locations
 milvus_nest <- read.csv(here("../Data/Output/05_nest/milvus_nest_location.csv")) %>%
   select(year_id, sex, nest, nest_id, potential_nest_long, potential_nest_lat)
 
@@ -221,9 +223,10 @@ nest_sf <- milvus %>%
   st_as_sf(coords = c("potential_nest_long", "potential_nest_lat"), crs = 3035)
 
 # Calculating the distance of each position to respective nest location
-sf_use_s2(FALSE) # deactivating spherical geometry s2
+suppressMessages(sf_use_s2(FALSE)) # deactivating spherical geometry s2
 milvus_sf$nest_dist <- NA
 milvus_sf$nest_dist <- st_distance(milvus_sf, nest_sf, by_element = T)
+suppressMessages(sf_use_s2(TRUE)) # reactivating spherical geometry s2
 
 # Dropping geometry and calculating the mean daily nest distance
 milvus_nest_dist <- milvus_sf %>%
@@ -254,7 +257,7 @@ for (i in unique(milvus_daily$year_id)) {
 # Removing data before 10th of March, they were only necessary for moving window calculations
 milvus_daily_final <- milvus_daily %>%
   filter(!(month == 3 & day < 10)) %>%
-# Removing remaining NA's and sort the data frame by year_id
+# Removing remaining NAs and sort the data frame by year_id
   na.omit() %>%
   arrange(year_id)
 
@@ -321,7 +324,6 @@ for (i in unique(milvus_daily_final_norm$year_id)) {
 }
 for (i in unique(milvus_daily_final_norm$year_id)) {
   milvus_individual <- get(paste0("milvus_", i))
-  
   milvus_individual$mcp_area_95 <-
     milvus_individual$mcp_area_95/max(milvus_individual$mcp_area_95)
   milvus_individual$mcp_area_95_mw_7day <-
@@ -338,7 +340,6 @@ for (i in unique(milvus_daily_final_norm$year_id)) {
     milvus_individual$nest_dist_mean/max(milvus_individual$nest_dist_mean)
   milvus_individual$nest_dist_mean_mw_7day <-
     milvus_individual$nest_dist_mean_mw_7day/max(milvus_individual$nest_dist_mean_mw_7day)
-  
   assign(paste0("milvus_", i), milvus_individual)
 }
 milvus_complete <- data.frame()

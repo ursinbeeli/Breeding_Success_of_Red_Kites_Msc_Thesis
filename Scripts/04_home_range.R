@@ -1,7 +1,8 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
-library(ggplot2)
 library(sf)
+library(ggplot2)
 
 
 
@@ -131,6 +132,7 @@ for (i in c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)) {
     theme(panel.background = element_blank(),
           panel.grid = element_line(colour = "gray95"))
   
+  # Saving plot
   ggsave(here(paste0("../Data/Output/Plots/04_home_range/01_size_", get("x"), "consecutive.pdf")),
          width = 3000, height = 1500, units = "px", dpi = 300)
 }
@@ -157,6 +159,7 @@ milvus_60_km2_consecutive_grouped %>%
         legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/04_home_range/02_hr_area_sex_diff_no_legend.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 
@@ -289,7 +292,7 @@ for (i in unique(milvus_weekly_centroids$year_id)) {
   }
 }
 
-# Calculate statistics of centroid displacement for the whole period per bird
+# Calculating statistics of centroid displacement for the whole period per bird
 milvus_weekly_centroids_grouped <- milvus_weekly_centroids %>%
   st_drop_geometry() %>%
   group_by(year_id) %>%
@@ -333,6 +336,7 @@ ggplot() +
   theme(panel.background = element_blank(),
         panel.grid = element_line(colour = "gray95"))
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/04_home_range/03_centroid_displacement.pdf")),
        width = 3000, height = 1500, units = "px", dpi = 300)
 
@@ -368,6 +372,7 @@ milvus_weekly_centroids_grouped %>%
         #legend.position = "none",
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/04_home_range/04_centroid_displacement_sex_diff.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 

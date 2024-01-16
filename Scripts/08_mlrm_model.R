@@ -1,8 +1,8 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(brms)
 library(ggplot2)
-library(ggpubr)
 
 
 
@@ -38,7 +38,7 @@ milvus_test <- milvus %>%
 
 
 # MODEL BUILDING ---------------------------------------------------------------
-# Creating directory to save models
+# Creating directory to save model
 if (!dir.exists(here("../Data/Output/08_mlrm_model"))) {
   if (!dir.exists(here("../Data/Output"))) {
     dir.create("../Data/Output")
@@ -57,15 +57,26 @@ brood_model_15 <- brm(bf(breeding_status ~ sex +
                            residence_time_nest_mw_7day * revisits_nest_mw_7day +
                            locations_per_day + (1 | year_id)),                           # control variable (left) & random effect (right)
                       data = milvus_train, family = categorical())
+
+# Saving model
 saveRDS(brood_model_15, here("../Data/Output/08_mlrm_model/brood_model_15.rds"))
 
 
 
 # PLOTTING ESTIMATES -----------------------------------------------------------
+# Creating directory to save plot
+if (!dir.exists(here("../Data/Output/Plots/08_mlrm_model"))) {
+  if (!dir.exists(here("../Data/Output"))) {
+    dir.create("../Data/Output")
+  }
+  if (!dir.exists(here("../Data/Output/Plots"))) {
+    dir.create("../Data/Output/Plots")
+  }
+  dir.create("../Data/Output/Plots/08_mlrm_model")
+}
 
 bm_summary <- summary(brood_model_15)$fixed %>%
   mutate(Parameters = row.names(summary(brood_model_15)$fixed))
-
 
 bm_incubating <- bm_summary %>%
   slice(3:13) %>%
@@ -86,7 +97,6 @@ bm_feeding$Parameters <- c("Sex", "95% MCP",
                            "95% MCP of females",
                            "Distance to nest of females", "Residence time of females",
                            "Revisitations of females", "Residence time - Revisitations")
-
 
 bm_combined <- bind_rows(bm_incubating, bm_feeding)
 
@@ -109,19 +119,6 @@ bm_combined %>%
         axis.text.y     = element_text(hjust = 0),
         panel.background = element_blank(),
         panel.grid = element_line(colour = "gray90"))
-
-
-
-# Creating directory for plots
-if (!dir.exists(here("../Data/Output/Plots/08_mlrm_model"))) {
-  if (!dir.exists(here("../Data/Output"))) {
-    dir.create("../Data/Output")
-  }
-  if (!dir.exists(here("../Data/Output/Plots"))) {
-    dir.create("../Data/Output/Plots")
-  }
-  dir.create("../Data/Output/Plots/08_mlrm_model")
-}
 
 # Saving plot
 ggsave(here(paste0("../Data/Output/Plots/08_mlrm_model/Coefplot_bm_15.pdf")),

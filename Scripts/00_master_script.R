@@ -1,13 +1,13 @@
 # LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
+library(sf)
 library(amt)
 library(recurse)
-library(sf)
 library(rnaturalearth)
+library(suncalc)
 library(ggplot2)
 library(ggpubr)
-library(suncalc)
 library(brms)
 
 
@@ -41,10 +41,16 @@ source("07_mlrm_parameters.R")
 # Building a multinomial logistic regression model with the training data and plotting its estimates
 source("08_mlrm_model.R")
 
-# Analysing the performance of the model and calculating statistics
+# Analysing the performance of the model and calculating statistics (Swiss data)
 source("09_mlrm_performance.R")
 
-# Plotting the model predictions on the testing data
+# Plotting the model predictions on the Swiss testing data
 source("10_mlrm_prediction_plots.R")
+
+# Analysing the performance of the model and calculating statistics (German data)
+source("11_mlrm_performance_de.R")
+
+# Plotting the model predictions on the German data
+source("12_mlrm_prediction_plots_de.R")
 
 

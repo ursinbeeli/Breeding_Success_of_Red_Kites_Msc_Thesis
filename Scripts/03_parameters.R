@@ -1,8 +1,9 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
+library(sf)
 library(amt)
 library(recurse)
-library(sf)
 library(ggplot2)
 
 
@@ -64,6 +65,7 @@ milvus_track <- milvus %>%
     date_id = date_id,
     crs = 3035
   )
+
 # Ordering track information by id and timestamp
 milvus_track <- milvus_track %>%
   arrange(id, t_)
@@ -76,7 +78,6 @@ milvus_daily <- milvus_daily %>%
   mutate(mcp_area_95_7day = NA,
          centroid_long = NA,
          centroid_lat = NA)
-
 for (i in unique(milvus_track$id)) {
   # Creating an individual data frame for every year_id
   milvus_individual <- milvus_track[milvus_track$id == i ,]

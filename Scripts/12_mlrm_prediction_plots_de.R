@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(brms)
@@ -7,7 +8,7 @@ library(ggpubr)
 
 
 # LOADING DATA -----------------------------------------------------------------
-# Movement data
+# Movement data of German birds
 milvus <- read.csv(here("../Data/german_birds.csv"))
 # Multinomial Logistic Regression Model
 brood_model_15 <- readRDS(here("../Data/Output/08_mlrm_model/brood_model_15.rds"))
@@ -110,7 +111,7 @@ for (k in unique(model_prediction$year_id)) {
   )
 }
 
-# Arranging first page
+# Arranging page
 plot_list <- list()
 for (l in 1:28) {
   m <- unique(model_prediction$year_id)[l]

@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(brms)
@@ -247,7 +248,7 @@ model_prediction_rules <- model_prediction
 
 
 
-# Plotting example bird
+# Plotting example bird with raw predictions
 k <-  "2021_490"
 y <- model_prediction_bm_15[model_prediction_bm_15$year_id == k,]
 z <- model_prediction_rules[model_prediction_rules$year_id == k,]
@@ -280,7 +281,7 @@ ggsave(here(paste0("../Data/Output/Plots/10_mlrm_prediction_plots/03_prediction_
 
 
 
-# Rule based adaptation
+# Plotting example bird with rule based adaptation
 ggplot(data = z[z$year_id == k,], aes(x = as.Date(date))) +
   geom_rect(aes(ymin = .5, ymax = 1,
                 xmin = as.Date(date) - .5, xmax = as.Date(date) + .5,

@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(brms)
@@ -5,7 +6,7 @@ library(brms)
 
 
 # LOADING DATA -----------------------------------------------------------------
-# Movement data
+# Movement data of German birds
 milvus <- read.csv(here("../Data/german_birds.csv"))
 # Multinomial Logistic Regression Model
 brood_model_15 <- readRDS(here("../Data/Output/08_mlrm_model/brood_model_15.rds"))
@@ -77,9 +78,11 @@ for (i in 1:nrow(model_prediction)) {
 model_prediction$accuracy <- model_prediction$accuracy_feeding +
   model_prediction$accuracy_incubating + model_prediction$accuracy_nonbreeding
 
+# Saving data frame with raw predictions
 write.csv(model_prediction_raw, here("../Data/Output/11_mlrm_performance_de/01_bm_15_predictions_raw.csv"),
           row.names = F)
 
+# Saving data frame with accuracy information
 write.csv(model_prediction, here("../Data/Output/11_mlrm_performance_de/02_bm_15_predictions.csv"),
           row.names = F)
 
@@ -232,7 +235,7 @@ for (i in 1:nrow(c_rule_based_adaptation)) {
   }
 }
 
-# Aetting "feeding" to "incubating"
+# Setting "feeding" to "incubating"
 c_rule_based_adaptation[c_rule_based_adaptation$predicted_breeding_status == "feeding" ,]$predicted_breeding_status <- "incubating"
 
 for (i in unique(c_rule_based_adaptation$year_id)) {

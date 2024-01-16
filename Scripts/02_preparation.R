@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(rnaturalearth)
@@ -47,7 +48,6 @@ for (k in data_sets) {
   # Removing entries with NAs in timestamp column
   milvus <- milvus[!is.na(milvus$timestamp),]
   
-  
   # Removing points outside of breeding season
   milvus <- milvus %>%
     dplyr::filter(month > 1 & month < 9 & !(month == 8 & day > 15))
@@ -56,7 +56,7 @@ for (k in data_sets) {
   
   
   
-  # REMOVING DUPLICATED TIMESTAMPS
+  # REMOVING DUPLICATES IN TIMESTAMPS
   # Grouping the gps data by bird_id and nesting them
   milvus <- milvus %>%
     nest(data = -"individual.local.identifier")
@@ -96,6 +96,7 @@ for (k in data_sets) {
       st_buffer(dist = -2) %>% # positive and negative buffer to avoid holes 
       st_simplify(dTolerance = 0.5) %>%
       st_as_sf()))
+  
   # Creating an sf object and excluding points outside of Europe
   milvus <- st_as_sf(milvus, coords = c("location.long", "location.lat"))
   st_crs(milvus) <- 4326
@@ -117,7 +118,7 @@ for (k in data_sets) {
   
   
   
-  # RESAMPLE TO 1 HOUR INTERVALS
+  # RESAMPLING TO 1 HOUR INTERVALS
   # Creating tracks
   milvus_track <- milvus %>%
     make_track(long_wgs, lat_wgs, timestamp,

@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 
@@ -13,7 +14,7 @@ ilh <- read.csv(here("../Data/Individual_life_history_2015-2022.csv"))
 
 
 # PREPARATION ------------------------------------------------------------------
-# Removing birds from life history that are not available in gsm and milsar GPS data
+# Removing birds from life history that are not available in GSM and Milsar GPS data
 ilh <- ilh[ilh$bird_id %in% unique(milvus_milsar$individual.local.identifier)
            | ilh$bird_id %in% unique(milvus_gsm$individual.local.identifier), ]
 # Creating a vector with all years where data is available
@@ -21,17 +22,15 @@ years <- c(2016:2022)
 
 
 
-# SELECT BIRD IDS OF BIRDS WITH A HOME RANGE -----------------------------------
+# SELECTING BIRD IDS OF BIRDS WITH A HOME RANGE --------------------------------
 # Selection of birds
 for (i in years) {
   assign(paste0("year_", i),
          ilh %>%
-           # Change following chunk to meet different criteria------------------
          dplyr::filter(!is.na(get(paste0("territoryID_", i))) &
                          get(paste0("territoryID_", i)) != "none" &
                          get(paste0("territoryID_", i)) != "unknown" &
                          get(paste0("territoryID_", i)) != "unknown (see comments)") %>%
-           #--------------------------------------------------------------------
          mutate(year = i,
                 year_id = paste0(year, "_", bird_id),
                 sex = sex_compiled,
@@ -50,16 +49,12 @@ for (i in years[2:length(years)]) {
 
 
 
-
-
-# SELECT BIRD IDS OF BIRDS WITH NO HOME RANGE-----------------------------------
+# SELECTING BIRD IDS OF BIRDS WITH NO HOME RANGE--------------------------------
 # Selection of birds
 for (i in years) {
   assign(paste0("year_", i),
          ilh %>%
-           # Change following chunk to meet different criteria------------------
          dplyr::filter(get(paste0("territoryID_", i)) == "none") %>%
-           #--------------------------------------------------------------------
          mutate(year = i,
                 year_id = paste0(year, "_", bird_id),
                 sex = sex_compiled) %>%
@@ -77,17 +72,13 @@ for (i in years[2:length(years)]) {
 
 
 
-
-
-# SELECT BIRD IDS OF BIRDS WITH A NEST------------------------------------------
+# SELECTING BIRD IDS OF BIRDS WITH A NEST---------------------------------------
 # Selection of birds
 for (i in years) {
   assign(paste0("year_", i),
          ilh %>%
-           # Change following chunk to meet different criteria------------------
          dplyr::filter(!is.na(get(paste0("nest_ID_", i-2000))) &
                          get(paste0("nest_ID_", i-2000)) != "unknown") %>%
-           #--------------------------------------------------------------------
          mutate(year = i,
                 year_id = paste0(year, "_", bird_id),
                 sex = sex_compiled,
@@ -106,16 +97,12 @@ for (i in years[2:length(years)]) {
 
 
 
-
-
-# SELECT BIRD IDS OF BIRDS WITH NO NEST-----------------------------------------
+# SELECTING BIRD IDS OF BIRDS WITH NO NEST--------------------------------------
 # Selection of birds
 for (i in years) {
   assign(paste0("year_", i),
          ilh %>%
-           # Change following chunk to meet different criteria------------------
          dplyr::filter(is.na(get(paste0("nest_ID_", i-2000)))) %>%
-           #--------------------------------------------------------------------
          mutate(year = i,
                 year_id = paste0(year, "_", bird_id),
                 sex = sex_compiled) %>%
@@ -130,8 +117,6 @@ for (i in years[2:length(years)]) {
   milvus_no_nest <- bind_rows(milvus_no_nest,
                                     get(paste0("year_", i)))
 }
-
-
 
 
 

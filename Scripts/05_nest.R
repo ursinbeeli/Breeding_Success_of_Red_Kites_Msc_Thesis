@@ -1,8 +1,8 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
-library(amt)
 library(sf)
-library(mapview)
+library(amt)
 library(recurse)
 library(ggplot2)
 
@@ -25,6 +25,7 @@ nest_list <- read.csv(here("../Data/Basic_nest_list_2015_2022.csv"))
 milvus <- milvus %>%
   mutate(timestamp = as.POSIXct(timestamp, format ="%Y-%m-%d %H:%M:%S", tz = "UTC"),
          date = as.Date(date, tz = "UTC"))
+
 # Removing entries with NAs in timestamp column (happens during formatting since some entries have only date in timestamp)
 milvus <- milvus[!is.na(milvus$timestamp),]
 
@@ -174,12 +175,9 @@ for (i in c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)) {
   
   x_lab <- expression(Area ~ paste("[") ~km^2 ~ paste("]"))
   line_lab <- bquote(Area ~ paste("=") ~ .(round(first_bird_with_nest, 3)) ~ km^2)
-  # paste0("Area = ", round(first_bird_with_nest, 3), " km")
   ggplot() +
     geom_line(birds_with_nest, mapping = aes(x = area, y = n_birds), color = "darkblue") +
     geom_line(birds_without_nest, mapping = aes(x = area, y = n_birds), color = "lightblue") +
-    # geom_line(mapping = aes(x = 5, y = 1:100), color = "red", linetype = "dashed") +
-    # geom_line(mapping = aes(x = 1, y = 1:100), color = "orange", linetype = "dashed") +
     geom_line(mapping = aes(x = first_bird_with_nest, y = 1:100), color = "red", linetype = "dashed") +
     annotate("text", x = first_bird_with_nest + .002, y = 50,
              label = line_lab, angle = 90, color = "red") +
@@ -190,6 +188,7 @@ for (i in c(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)) {
     scale_x_continuous(trans = "reverse") + 
     coord_cartesian(xlim=c(.1, 0))
   
+  # Saving plots
   ggsave(here(paste0("../Data/Output/Plots/05_nest/01_area_", get("n_most_visited"), "_most_visited.pdf")),
          width = 3000, height = 1500, units = "px", dpi = 300)
 }
@@ -223,6 +222,7 @@ milvus_track_sf_top_45 %>%
         legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/01_area_sex_diff_nest.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 
@@ -242,6 +242,7 @@ milvus_track_sf_top_45 %>%
         legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/01_area_sex_diff_no_nest.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 
@@ -420,6 +421,7 @@ dist_to_nest %>%
         axis.ticks = element_blank()
         )
 
+# Saving plot
 ggsave(here("../Data/Output/Plots/05_nest/02_nest_dist_bar.pdf"),
        width = 3000, height = 1500, units = "px", limitsize = F)
 
@@ -446,6 +448,7 @@ dist_to_nest_sex %>%
         legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/03_nest_dist_sex_diff.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 
@@ -515,6 +518,7 @@ ggplot() +
         panel.grid = element_line(colour = "gray95"),
         plot.title = element_text(hjust = 0.5))
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/04_residence_time.pdf")),
        width = 3000, height = 1500, units = "px", dpi = 300)
 
@@ -536,6 +540,7 @@ milvus_nest_stats %>%
         legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/05_residence_time_sex_diff.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 
@@ -599,6 +604,7 @@ ggplot() +
         panel.grid = element_line(colour = "gray95"),
         plot.title = element_text(hjust = 0.5))
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/07_revisits.pdf")),
        width = 3000, height = 1500, units = "px", dpi = 300)
 
@@ -621,6 +627,7 @@ milvus_nest_stats %>%
         # legend.position = "none"
   )
 
+# Saving plot
 ggsave(here(paste0("../Data/Output/Plots/05_nest/07_revisits_sex_diff.pdf")),
        width = 1500, height = 2000, units = "px", dpi = 300)
 

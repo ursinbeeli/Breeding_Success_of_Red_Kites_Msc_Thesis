@@ -1,3 +1,4 @@
+# LOADING PACKAGES -------------------------------------------------------------
 library(here)
 library(dplyr)
 library(brms)
@@ -91,9 +92,11 @@ for (i in 1:nrow(model_prediction)) {
 model_prediction$accuracy <- model_prediction$accuracy_feeding +
   model_prediction$accuracy_incubating + model_prediction$accuracy_nonbreeding
 
+# Saving data frame with raw predictions
 write.csv(model_prediction_raw, here("../Data/Output/09_mlrm_performance/01_bm_15_predictions_raw.csv"),
           row.names = F)
 
+# Saving data frame with accuracy information
 write.csv(model_prediction, here("../Data/Output/09_mlrm_performance/02_bm_15_predictions.csv"),
           row.names = F)
 
